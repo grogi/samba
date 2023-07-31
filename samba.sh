@@ -138,7 +138,7 @@ share() { local share="$1" path="$2" browsable="${3:-yes}" ro="${4:-yes}" \
     [[ ${comment:-""} && ! ${comment:-""} =~ none ]] &&
         echo "   comment = $(tr ',' ' ' <<< $comment)" >>$file
     echo "" >>$file
-    [[ -d $path ]] || mkdir -p $path
+    [[ -d $path ]] || [[ "$path" == *"%"* ]] || mkdir -p $path
 }
 
 ### smb: disable SMB2 minimum
@@ -293,5 +293,5 @@ elif ps -ef | egrep -v grep | grep -q smbd; then
     echo "Service already running, please restart container to apply changes"
 else
     [[ ${NMBD:-""} ]] && ionice -c 3 nmbd -D
-    exec ionice -c 3 smbd -FS --no-process-group </dev/null
+    exec ionice -c 3 smbd -F --debug-stdout --no-process-group </dev/null
 fi
